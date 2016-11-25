@@ -1,0 +1,152 @@
+<%staticRelation = {
+    'protocol': '协议类型',
+	'vip_name': 'VIP名称',
+	'vip': '虚拟IP',
+	'vport': '虚拟port',
+	'rs_cluster_name': '后端服务集群名称',
+	'rs_port': '后端服务集群端口',
+     
+    'lb_kind': '负载均衡模式',
+    'lb_algo': '负载均衡算法',
+
+    'type': '健康检查类型' ,
+    'connect_timeout': '连接超时时间',
+    'delay_loop': '健康检查间隔',
+    'nb_get_retry': '重试次数',
+    'delay_before_retry': ' 重试之前等待时间',
+
+    'url_path': 'URL PATH',
+    'url_status_code': '期望返回的状态码',
+    'environment_type': '环境类型'
+
+}%>
+<!--
+ 多一个当前分组下机器列表，然后等着转菊花
+-->
+<!--
+<div class="modal fade" id="detailmodal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>	
+			</div>
+			<div class="modal-body">-->
+			    <!--[{name: 'xx', value: [{name: , value: }]}, {}, {}]-->
+				<%_.each(data, function(item){%>
+				  <table class="table">
+				  	<caption><%=item['name']%></caption>
+				  	<tbody>
+				  		<%_.each(item['value'], function(v, k){%>
+				  		   <tr>
+				  			  <td><%=staticRelation[k]%></td>
+				  			  <% if (v && v!="") {%>
+				  			  <td><%=v%></td>
+				  			  <%}else{%>
+				  			  <td>还未设置</td>
+				  			  <%}%>
+
+				  		   </tr>
+				  	    <%})%>	
+				  	</tbody>
+				  </table>
+				<%})%>
+			<!--</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary">确认</button>
+			</div>
+		</div>
+	</div>
+</div>-->
+
+
+<!--
+virtual_server <VIP> <VPORT> {
+	delay_loop <delay_loop>
+	lb_algo <lb_algo>
+	lb_kind FNAT
+	protocol TCP
+
+	real_server <IP_ADDR> <PORT> {
+	   weight <INTEGER>
+	   inhibit_on_failure
+	   notify_up "/etc/keepalived/scripts/notify.py" "<IP_ADDR>" "<PORT>" "UP"
+	   notify_down "/etc/keepalived/scripts/notify.py" "<IP_ADDR>" "<PORT>" "DOWN"
+	   if (<check_type> == 'HTTP')
+	   {
+	       HTTP_GET {
+	          url {
+	             path <PATH>
+	             status_code <status_code>
+	          }
+	          connect_timeout <connect_timeout>
+	          nb_get_retry <nb_get_retry>
+	          delay_before_retry <delay_before_retry>
+	       }
+	   }
+	   else if (<check_type> == 'TCP')
+	   {
+	       TCP_CHECK {
+	          connect_timeout <connect_timeout>
+	          nb_get_retry <nb_get_retry>
+	          delay_before_retry <delay_before_retry>
+	       }
+	   }
+	   else
+	   {
+	       TCP_CHECK {
+	          connect_timeout 2
+	          nb_get_retry 3
+	          delay_before_retry 1
+	       }
+	   }
+	}
+}
+
+数据库里面的数据组织
+lvs表
+id
+vip_name  "not null" 可变
+vip   "not null"
+vport "not null"
+protocol "not null" default(TCP)
+//下面都是可以修改的
+lb_kind "not null"  default(full_nat)
+lb_algo "not null"  
+delay_loop "not null"
+check_type "not null" tcp/http
+url_path "not null"
+url_status_code "not null"
+connect_timeout
+nb_get_retry
+delay_before_retry
+rs_cluster_name
+in_use
+
+rs表
+id
+parent_id  这个id是可变的，指向LVS的id
+ip 不可变
+port 可变
+protocol TCP
+status
+in_use
+
+入口：
+添加：
+ 添加vip vport关联后端主机集群
+ 在ocean之中查询后端主机集群的所有机器
+ 在rs表之中，将后端主机修改parent_id，修改port，修改in_use状态
+
+
+ 删除：
+   将VIP VPORT设置为不可用
+   将这个VIP VPORT关联的后端主机全部设置为停用状态
+
+
+可能在ocean分组之中机器相互挪动，造成根据某个VIP，查找最初配置的后端集群和现在根据集群名称找到的不一致了。所以可以一键更新（类添加操作）。
+
+
+所以在显示的时候需要这么做，根据vip找到和这个vip关联的所有后端主机，找到这些后端主机归属的所有分组！所有分组的下挂机器
+rs_in_running rs_in_config 配置集群(一堆机器，在in running的里面且健康就标绿，否则标红) 其它集群（也是这样做）
+-->

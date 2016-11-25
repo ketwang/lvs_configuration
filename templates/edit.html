@@ -1,0 +1,144 @@
+<table class="table">
+	<caption>基本配置</caption>
+	<tbody>
+		<tr>
+			<td>VIP名称</td>
+			<td><%=vip_name%></td>
+		</tr>
+		<tr>
+			<td>协议类型</td>
+			<td><%=protocol%></td>
+		</tr>
+		<tr>
+			<td>虚拟IP</td>
+			<td><%=vip%></td>
+		</tr>
+		<tr>
+			<td>虚拟PORT</td>
+			<td><%=vport%></td>
+		</tr>
+	</tbody>
+</table>
+<table class="table">
+	<caption>模式配置</caption>
+	<tr>
+		<td>负载均衡模式</td>
+		<td><%=lb_kind%></td>
+	</tr>
+	<tr>
+		<td>负载均衡算法</td>
+		<td><%=lb_algo%></td><!--这里是选择下拉框-->
+	</tr>
+</table>
+<table class="table">
+	<caption>集群健康检查相关配置</caption>
+	<tr>
+		<td>检查类型</td>
+		<td><%=check_type%></td><!--这里也需要供选择-->
+	</tr>
+	<!--如果检查类型是http类型的，那么下面几个就是需要的-->
+	<tr>
+		<td>健康检查时间间隔</td>
+		<td>
+		   <div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name="delay_loop" type="text" class="form-control" value=<%=delay_loop%>>
+		   	 <span class="input-group-addon">秒</span>
+		   </div>
+		</td><!--这里也需要供选择-->
+	</tr>
+	<%if (check_type == 'http') {%>
+	<tr>
+		<td>PATH</td>
+		<td>
+			<div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name='url_path' type="text" class="form-control" value=<%=url_path%>>
+		   </div>
+		</td><!--这里可以输入-->
+	</tr>
+	<tr>
+		<td>期望返回的状态码</td>
+		<td>
+			<div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name="url_status_code" type="text" class="form-control" value=<%=url_status_code%>>
+		   </div>
+		</td><!--这里可以设置-->
+	</tr>
+	<%}%>
+	<!--http检查多余的参数设置到这里为止-->
+	<tr>
+		<td>连接超时时间设置</td>
+		<td>
+			<div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name="connect_timeout" type="text" class="form-control" value=<%=connect_timeout%>>
+		   	 <span class="input-group-addon">秒</span>
+		   </div>
+		</td><!--这里可以设置-->
+	</tr>
+	<tr>
+		<td>重试次数</td>
+		<td>
+			<div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name="nb_get_retry" type="text" class="form-control" value=<%=nb_get_retry%>>
+		   </div>
+		</td><!--这里可以设置-->
+	</tr>
+	<tr>
+		<td>重试之前等待的时间</td>
+		<td>
+			<div class="input-group col-md-offset-3 col-md-4">
+		   	 <input name="delay_before_retry" type="text" class="form-control" value=<%=delay_before_retry%>>
+		   	 <span class="input-group-addon">秒</span>
+		   </div>
+		</td><!--这里可以设置-->
+	</tr>
+</table>
+<table class="table">
+	<caption>默认集群(<%=rs_cluster_name%>)</caption>
+	<tbody>
+	   <%_.each(cluster_and_rs[rs_cluster_name], function(ip, k){%>
+		<tr>
+		   <td><%=ip%></td>
+		   <%if (_.some(rs_in_config, function(rs){return rs['ip'] == ip})){%>
+		      <td>已配置</td>
+		      <%_.each(rs_in_config, function(rs){%>
+		         <%if (rs['ip'] == ip){%>
+		            <td><%=rs['status']%></td>
+		         <%}%>
+		      <%})%>
+		   <%}else{%>
+		     <td>未配置</td>
+		     <td>状态未知</td>
+		   <%}%>
+		</tr>
+	   <%})%>
+	</tbody>
+</table>
+<%_.each(cluster_and_rs, function(v,k){%>
+ <%if (k != rs_cluster_name) {%>
+  <table class="table">
+	<caption><%=k%></caption>
+	<tbody>
+	    <%_.each(v, function(ip, k){%>
+		  <tr>
+			<td><%=ip%></td>
+			<%if (_.some(rs_in_config, function(rs){return rs['ip'] == ip})){%>
+			   <td>已配置</td>
+			   <%_.each(rs_in_config, function(rs){%>
+			       <%if (rs['ip'] == ip){%>
+			          <td><%=rs['status']%></td>
+			       <%}%>
+			   <%})%>
+			<%}else{%>
+			   <td>未配置</td>
+			   <td>状态未知</td>
+			<%}%>	
+		  </tr>
+		<%})%>
+	</tbody>
+  </table>
+ <%}%>
+<%})%>
+
+
+
+

@@ -1,0 +1,54 @@
+<div>
+  <div>
+    <div class="row" style="margin:10px 0px;">
+        <div class="dropdown col-md-2">
+          <button type="button" class="btn dropdown-toggle" id="dropdownMenul" data-toggle="dropdown">选择LVS集群<span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:;" class="prod">生产环境</a></li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1" href="javascript:;" class="pre">预发环境</a>
+            </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1" href="javascript:;" class="daily">日常环境</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-4"><button type="button" class="btn btn-warning btn-xs environment">当前环境: 生产环境</button></div>
+        <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="VIP查询" disabled="disabled"></div>
+        <div>
+           <button type="button" class="btn btn-primary show-configuration">总配置预览</button>
+        </div>
+    </div>
+  </div>
+
+
+  <!--<div class="portlet-body">-->
+  	 <div class="table-scrollable hide table-wrapper"><!--hide-->
+  	 	<table class="table table-bordered table-hover groups-table">
+  	 		<thead>
+  	 			<tr>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">协议类型</a></th>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">VIP名称</a></th>
+  	 			   <th><a style="font-weight:bold;text-decoration:none;color:black;">VIP:PORT</a></th>
+  	 			   <th><a style="font-weight:bold;text-decoration:none;color:black;">所属服务集群分组</a></th><!--绿色OK 灰色未加入 红色不一致的配置-->
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">服务集群环境</a></th>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">运行状态RS:PORT</a></th>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">配置状态RS:PORT</a></th>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">集群机器列表</a></th>
+             <th><a style="font-weight:bold;text-decoration:none;color:black;">修改、删除</a></th>
+  	 			</tr>
+  	 		</thead>
+  	 		<tbody>
+  	 			
+  	 		</tbody>
+  	 	</table>
+  	 </div>
+     <div class="hide message-loading text-center"><span class="spinner"></span>loading...</div>
+     <div class="hide message-empty text-center">暂无数据</div>
+     <div class="pagination-container"></div>
+</div>
+
+
+
+
+

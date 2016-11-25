@@ -1,0 +1,82 @@
+<!--
+{
+				'vip_name': 'test for test',
+				'vip': '10.2.190.11',
+				'vport': '80',
+				'rs_cluster_name': 'puppetmaster',
+				'rs_port': '8140',
+				'iplist': ['10.2.111.56', 
+				'10.2.111.55',
+				'10.2.111.30',
+				'10.2.104.108']
+			};
+ 上面是测试数据
+-->
+
+<!--
+<div class="modal fade" id="detailmodal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>	
+			</div>
+			<div class="modal-body">-->
+				  <table class="table table-hover">
+				  	<caption>集群信息</caption>
+				  	<thead>
+				  		<tr>
+				  			<th>名称</th>
+				  			<th>配置值</th>
+				  		</tr>
+				  	</thead>
+				  	<tbody>
+				  		   <tr>
+				  		    <td>vip名称</td>
+				  		    <td><%=data['vip_name']%></td>
+				  		   </tr>
+				  		   <tr>
+				  		   	<td>协议类型</td>
+				            <td><%=data['protocol']%></td>
+				  		   </tr>
+				  		   <tr>
+				  		   	<td>虚拟IP</td>
+				  		   	<td><%=data['vip']%></td>
+				  		   </tr>
+				  		   <tr>
+				  		   	<td>虚拟port</td>
+				  		   	<td><%=data['vport']%></td>
+				  		   </tr>
+				  		   <tr>
+				  		   	<td>集群名称</td>
+				  		   	<td><%=data['rs_cluster_name']%></td>
+				  		   </tr>
+				  		   <tr>
+				  		   	<td>服务端口</td>
+				  		   	<td><%=data['rs_port']%></td>
+				  		   </tr>
+				  	</tbody>
+				  </table>
+				  <table class="table">
+				  	<caption>集群healthcheck状态</caption>
+				  	<thead>
+				  		<tr>
+				  			<th>集群机器IP</th>
+				  			<th>机器状态</th>
+				  		</tr>
+				  	</thead>
+				  	<%_.each(data['iplist'], function(ip){%>
+				  	  <tr>
+				  	  	<td><%=ip%></td>
+				  	  	<td><span class="spinner" id="<%=ip%>"></span>
+				  		   	  </td></td>
+				  	  </tr>
+				  	<%})%>
+				  </table>
+			<!--</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary">确认</button>
+			</div>
+		</div>
+	</div>
+</div>-->

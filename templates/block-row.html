@@ -1,0 +1,97 @@
+<td>
+  <p>
+  		<%=protocol%>
+  </p>
+
+</td>
+<td>
+  <p>
+  		<%=vip_name%>
+  </p>
+
+</td>
+<td>
+  <p>
+  		<a class='ok vs_ip_port'><%=vip%>:<%=vport%></a>
+  </p>
+
+</td>
+<td>
+        <p>
+        	<a class="label label-danger"><%=rs_cluster_name%></a>
+        </p>
+
+</td>
+<td>
+  <p>
+  	<!-- class="label label-primary">-->
+  		<%=environment_type%>
+  </p>
+
+</td>
+<td>
+  <%_.each(rs_in_config, function(item){%>
+    <%if (item['status'] == 'up'){%>
+      <p>
+        <a class="ok rs_ip_port"><%=item["ip"]%>:<%=item["port"]%></a>
+        <span class="glyphicon glyphicon-ok"></span>
+      </p>
+    <%}else if (item['status'] == 'down'){%>
+      <p>
+        <a class="label label-danger"><%=item["ip"]%>:<%=item["port"]%></a>
+        <span class="glyphicon glyphicon-remove"> 
+        </span>
+      </p>
+    <%}%>
+
+  <%})%>
+
+</td>
+<td>
+	<%_.each(rs_in_config, function(item){%>
+	    <p>
+	      <%=item["ip"]%>:<%=item["port"]%>
+	      <span class="glyphicon glyphicon-ok">	
+	      </span>
+	    <p>	
+	<%})%>
+</td>
+<td>
+	<%_.each(cluster_and_rs, function(v, k){%>
+	  <%if (k == rs_cluster_name) {%>
+	    <p>
+	      <span class="glyphicon glyphicon-thumbs-up"><%=k%></span>
+	    </p>    
+	  <%}else{%>
+	    <p>
+	      <a class="label label-danger"><span class="glyphicon glyphicon-thumbs-down"><%=k%></span></a>
+	    </p>
+	  <%}%> 
+	<%})%>
+</td>
+<td>
+   <a class="btn btn-warning btn-xs delete-block" href="javascript:void(0)">
+<i class="glyphicon glyphicon-wrench"></i></a>
+   <a class="btn btn-danger btn-xs edit-block" href="javascript:void(0)">
+<i class="glyphicon glyphicon-trash"></i></a>
+</td>
+
+
+
+<!--
+数据格式如
+[{'vs_ip': 10.2.199.12, 'vs_port': 80, 'group_name': 'group', 'rs_in_running': [['ip', 'port']], 'rs_in_config': [['ip', 'port']], 'rs_in_group': [all_server_ip_prod/pre/daily]}]
+indexof()
+
+(1)vip_name vip  vip_port groupname下存活的rs+port groupname下配置的rs+port groupname下prod/pre/daily机器列表
+(2)当前配置文件与running状态的机器是否一致（就是VIP能否对得上）
+   对不上 提示出来就要人工去解决
+   对的上 就提示状态OK
+<id>
+{"vs_ip": 10.2.199.12, 
+		"vs_port": 80, 
+		"group_name": 'puppet', 
+		"rs_in_running": [{"ip": "1.1.1.1", "port": "8080"}], 
+		"rs_in_config": [{"ip" : "1.1.1.1", "port" : "8080"}, {"ip" : "2.2.2.2", "port": "8080"}], 
+		"rs_in_group": {"type": "prod", "iplist" : ["1.1.1.1", "2.2.2.2", "3.3.3.3"]}}
+		-->

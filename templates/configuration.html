@@ -1,0 +1,35 @@
+<%_.each(data, function(model){%>
+    #<%=model['vip_name']%>
+    virtual_server <%=model['vip']%>  <%=model['vport']%> {
+         delay_loop <%=model['delay_loop']%>
+         lb_algo <%=model['lb_algo']%>
+         lb_kind <%=model['lb_kind']%>
+         protocol TCP
+         laddr_group_name laddr_g1
+         alpha
+         omega
+         quorum 1
+         hysteresis 0
+        <%_.each(model['rs_in_config'], function(item){%>
+         real_server <%=item['ip']%> <%=item['port']%>{ 
+              weight 100
+              inhibit_on_failure
+              #notify_up
+              #notify_down
+             <%if (model['check_type'] == 'http'){%> 
+              HTTP_GET { 
+                  url { 
+                     path <%=url_path%> 
+                     status_code <%=url_status_code%> 
+                  } 
+             <%}else{%>
+              TCP_CHECK { 
+             <%}%>
+                  connect_timeout <%=model['connect_timeout']%> 
+                  nb_get_retry <%=model['nb_get_retry']%> 
+                  delay_before_retry <%=model['nb_get_retry']%> 
+              } 
+         } 
+        <%})%>
+    } 
+<%})%>

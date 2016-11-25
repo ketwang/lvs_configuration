@@ -1,0 +1,190 @@
+
+<!--映射关系构建-->
+<form class="form-horizontal" id="test_form" role="form">
+   <div class="panel panel-primary basic_set">
+     <div class="panel-heading">
+       基本映射关系配置
+     </div>
+     <div class="panel-body">
+      <div class="form-group">
+        <label for="firstname" class="col-sm-2 control-label">vip名称</label>
+        <div class="col-sm-4">
+           <input type="text" class="form-control vip_name" id="firstname" placeholder="请输入名字" name="vip_name" data-validation="required length alphanumeric" data-validation-length="5-30" data-validation-allowing="-_" data-validation-help="起一个你喜欢的，别人也容易理解的名字，5到20个字符串，按照c语言的变量名命名...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class='col-sm-2 control-label'>协议类型</label>
+        <div class="col-sm-4 col-sm-4">
+           <input type="text" class="form-control" disabled="true" placeholder="TCP">
+        </div>
+      </div>
+
+
+      <div class="form-group">
+         <label for="vip" class="col-sm-2 control-label">VIP</label>
+         <div class="col-sm-4">
+             <input type="text" class="form-control vip" name="vip" disabled="disabled"><!--disabled='disbaled'-->
+         </div>
+
+         <label for="vport" class="col-sm-2 control-label">VPORT</label>
+         <div class="col-sm-2">
+            <input type="text" class="form-control vport" name="vport"
+            data-validation="number required" data-validation-allowing="range[80;10000]" data-validation-help="你需要选定一个对外服务的端口，请填写一个标准的，80到1000之间...">
+         </div>
+      </div>
+
+      <div class="form-group">
+          <label for='cluster_name' class="col-sm-2 control-label">
+      集群名称
+          </label>
+          <!--选择远程分组功能-->
+          <div class="col-sm-4">
+              <select id='rs_cluster_name' class="js-data-example-ajax form-control" name="rs_cluster_name" data-validation="required">
+              </select>
+          </div>
+
+          <label class="col-sm-2 control-label">后端服务器端口</label>
+          <div class="col-sm-2">
+              <input type="text" class="form-control rs_port" name="rs_port" data-validation="number" data-validation-allowing="range[80;10000]" data-validation-help="填写一个80到10000之间的端口号，一般我们都是选择8080，即使不是也不要乱使用1000以下的端口...">
+          </div>
+      </div>
+    </div>
+    <div class="panel-footer basic_set_error_message" style="display: none"></div>
+  </div>
+
+  <!--VIP:VPORT相关属性配置-->
+  <div class="panel panel-info lb_set">
+      <div class="panel-heading">
+          负载均衡模式和算法配置
+      </div>
+      <div class="panel-body">
+         <div class="form-group">
+           <label class="col-sm-2 control-label">负载均衡模式</label>
+           <div class="col-sm-4">
+               <input type="text" class="form-control" disabled="true" placeholder="Full Nat模式">
+           </div>
+         </div>
+
+         <div class="form-group">
+            <label class='col-sm-2 control-label'>负载均衡算法</label>
+            <div class="col-sm-4">
+               <select id='lb_algo' class="form-control lb_algo" name="lb_algo">
+                   <option value='rr'>负载均衡算法选择(默认为轮询)</option>
+                   <option value='rr'>rr</option>
+                   <option value='sh'>sh</option>
+               </select>
+            </div>
+         </div>
+      </div>
+      <div class="panel-footer error_message" style="display:none"></div>
+  </div>
+
+  <div class="panel panel-success health_checker">
+     <!--健康检查配置-->
+     <div class="panel-heading">
+         健康检查配置
+     </div>
+     <div class="panel-body">
+        <div class="form-group">
+           <label class="col-sm-2 control-label">健康检查方式</label>
+           <div class="col-sm-4">
+               <select  class="form-control check_type" name="check_type">
+                   <option>请选择</option>
+                   <option value="tcp">TCP</option>
+                   <option value="http">HTTP</option>
+               </select>
+           </div>
+        </div>
+
+        <div id='tcp' style="display:none">
+            <div class="form-group">
+               <label class="col-sm-2 control-label">检查间隔时间</label>
+               <div class="col-sm-4">
+                  <input class="form-control tcp_delay_loop" data-validation="number" data-validation-allowing="range[2;30]" data-validation-help="嗯，这是检查健康的时候需要的...20秒到30秒都可以接受....">
+               </div>
+            </div>
+
+            <div class="form-group">
+               <label class="col-sm-2 control-label">TCP建连超时</label>
+               <div class="col-sm-4">
+                  <input class="form-control tcp_connect_timeout" data-validation="number" data-validation-allowing="range[1;5]">
+               </div>
+            </div>
+
+            <div class="form-group">
+                <div class="panel panel-warning  col-sm-offset-1 col-sm-10">
+                 <div class="panel-heading">
+                    什么情况下我们可以认为某台机器已经不能提供服务了？
+                 </div>
+                 <div class="panel-body">
+                   <label class="col-sm-2 control-label">连续失败几次？</label>
+                   <div class="col-sm-2">
+                       <input class="form-control tcp_nb_get_retry" data-validation="number" data-validation-allowing="range[1;10]">
+                   </div>
+                   <label class="col-sm-3 control-label">失败后等待多久重试？</label>
+                   <div class="col-sm-4">
+                       <input class="form-control tcp_delay_before_retry" data-validation="number" data-validation-allowing="range[1;20]">
+                   </div>
+                 </div>
+                </div>
+            </div>
+        </div>
+    
+    <div id='http' style="display:none">
+     <div class="form-group">
+        <label class="col-sm-2 control-label">检查间隔时间</label>
+        <div class="col-sm-4">
+          <input class="form-control http_delay_loop" data-validation="number" data-validation-allowing="range[2;30]" data-validation-help="嗯，这是检查健康的时候需要的...20秒到30秒都可以接受....">
+        </div>
+     </div>
+     <div class="form-group">
+      <label class="col-sm-2 control-label">设定检查path</label>
+      <div class="col-sm-4">
+        <input class="form-control path" data-validation="alphanumeric" data-validation-length="5-30" data-validation-allowing=".-_/" data-validation-help="嗯，设置一个url check路径...">
+      </div>
+     </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">期望statusCode</label>
+      <div class="col-sm-4">
+        <input class="form-control status_code" data-validation="number" data-validation-allowing="range[100;600]" data-validation-help="设置一个我们所期望的健康检查返回的status code...">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">单次连接超时时间</label>
+      <div class="col-sm-4">
+        <input class="form-control http_connect_timeout" data-validation="number" data-validation-allowing="range[2;10]">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="panel panel-warning  col-sm-offset-1 col-sm-10">
+        <div class="panel-heading">
+          什么情况下我们可以认为某台机器已经不能提供服务了？
+        </div>
+        <div class="panel-body">
+            <label class="col-sm-2 control-label">连续失败几次？</label>
+            <div class="col-sm-2">
+                <input class="form-control http_nb_get_retry" data-validation="number" data-validation-allowing="range[2;10]">
+            </div>
+            <label class="col-sm-3 control-label">失败后等待多久重试？</label>
+            <div class="col-sm-4">
+              <input class="form-control http_delay_before_retry" data-validation="number" data-validation-allowing="range[2;30]">
+            </div>
+        </div>
+      </div>
+     </div>
+    </div>
+  </div>
+
+  <div class="panel-footer error_message" style="display:none"></div>
+</div>
+
+
+<!--</div>-->
+</form>
+  <div class="btn-group col-sm-offset-5">
+      <button type="button" class="btn btn-success show">预览</button>
+      <button type="button" class="btn btn-primary submit">提交</button>
+  </div>
