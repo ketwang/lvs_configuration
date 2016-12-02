@@ -7,10 +7,12 @@ import highcharts from 'highcharts';
 import 'jquery-form-validator';
 import 'jquery-form-validator/src/theme-default.css';
 import 'select2';
+import 'bootstrap-multiselect';
 import CodeMirror from 'codemirror';
 //import dislog from 'codemirror/addon/dialog/dialog'
 //import cursor from 'codemirror/addon/search/searchcursor'
 //import vim from 'codemirror/keymap/vim'
+
 import 'codemirror/mode/shell/shell';//clike/clike
 import 'codemirror/keymap/vim';
 
@@ -260,7 +262,7 @@ var BlockRowView = Backbone.View.extend({
 	  this.$el.attr('class', 'warning');
 	  console.log('让开  我要编辑这个');
 	  self = this;
-	  var editblock = new EditBlock({model: this.model});
+	  var editblock = new EditBlock({model: this.model, collection: this.collection});
 	  this.$editview = new commonModal({
 	  	model: this.model,
 	  	collection: this.collection,
@@ -502,15 +504,79 @@ var BlockRowView = Backbone.View.extend({
 
 var EditBlock = Backbone.View.extend({
 	template: _.template(require('./templates/edit.html')),
-	events: {},
+	events: {
+		//'click .minus' : 'stopRs',
+		//'click .plus' : 'startRs'
+	},
+	//异步启用，启用或者停用某个RS，只有点击确认才去提交出发更新
+	//更改某个rs状态，取消按钮不可用了
+	stopRs: function(e){
+		var self = e.data.myself;
+		var params = {};
+		params['id'] = self.model.id;
+        params['port'] = self.model.get('rs_cluster_port');
+        params['ip'] = $(e.target).attr('name');
+        params['action'] = 'stop';
+        $(e.target).removeClass();
+        $(e.target).addClass('spinner');
+		$.ajax({
+			'url': '/data/lvs/update-rs?'+$.param(params),
+			'type': 'get'
+		}).success(function(data){
+			if (data.result == 'success')
+			{
+				$(e.target).removeClass();
+	  			$(e.target).addClass('glyphicon glyphicon-plus plus');
+				self.model.set(data.model);
+	  			//触发change事件会重新渲染页面
+	  			self.collection.add(self.model,{merge: true});
+			}
+		}).fail(function(data){
+			if (data.result == 'failure')
+			{
+
+			}
+		})
+		//成功后，修改model数据
+	},
+	startRs: function(e){
+		var self = e.data.myself;
+		var params = {};
+		params['id'] = self.model.id;
+        params['port'] = self.model.get('rs_cluster_port');
+        params['ip'] = $(e.target).attr('name');
+        params['action'] = 'start';
+		//只是修改in_use状态
+		$(e.target).removeClass();
+        $(e.target).addClass('spinner');
+		$.ajax({
+			'url': '/data/lvs/update-rs?'+$.param(params),
+			'type': 'get'
+		}).success(function(data){
+			if (data.result == 'success')
+			{
+				$(e.target).removeClass();
+	  			$(e.target).addClass('glyphicon glyphicon-minus minus');
+				self.model.set(data.model);
+	  			//触发change事件会重新渲染页面
+	  			self.collection.add(self.model,{merge: true});
+			}
+		}).fail(function(data){})
+	},
 	initialize: function(options) {
-		this.options = options;
+		//this.options = options;
+		options = options || {};
+        _.each(options, function (v,k){ this[k] = v;},this);
+        //this.$el = $(this.template(this.model.toJSON()));
 	},
 	render: function(){
-		this.$el = $(this.template(this.options.model.toJSON()));
+		//this.$el = $(this.template(this.options.model.toJSON()));
+		this.$el = $(this.template(this.model.toJSON()));
+		this.$el.find('.minus').on('click', {'myself': this}, this.stopRs);
+		this.$el.find('.plus').on('click', {'myself': this}, this.startRs);
 		return this;
 	}
-}) 
+})
 
 var TestBlockRowView = Backbone.View.extend({
 	template: _.template(require('./templates/block-row.html')),
@@ -591,6 +657,7 @@ var commonModal = Backbone.View.extend({
 		{
 			$('.cancel').on('click', this.options['dismiss'], this.cancel);
 		    $('.submit').on('click', {'submit': this.options['submit'], 'id': this.model.attributes.id}, this.submit);
+		    this.model.on('change', function(){this.$el.modal('hide')}, this);
 		}
 	},
 	open: function(){
@@ -629,14 +696,14 @@ var anotherModalView = Backbone.View.extend({
 		//while( true ){}
 		return this;
 	},
-	getIPStatus: function(iplist){
+	getIPStatus: function(iplist, port){
 		self = this;
         var sets = {};
 		_.each(iplist, function(ip){
 			sets[ip] = setInterval(function(){
 				$.ajax({
 					type: 'GET',
-					url: '/data/lvs/health?ip='+ip+'port='+port,
+					url: '/data/lvs/health?ip='+ip+'&port='+port,
 				}).success(function(data){
 					console.log(data);
 					if (data.status == 'up')
@@ -750,6 +817,7 @@ var lvsFormView = Backbone.View.extend({
 			//console.log(data);
 			//console.log(textStatus);
 			console.log("成功");
+			console.log(data1);
 			if (data1.success == 'no')
 			{
 				alert(data1.message);
@@ -757,7 +825,7 @@ var lvsFormView = Backbone.View.extend({
 			else
 			{
 				var view = new anotherModalView({});
-				view.render(data1).getIPStatus(data1['iplist']);
+				view.render(data1).getIPStatus(data1['iplist'], data1['rs_port']);
 			}
 			//var view = new anotherModalView({});
 			//view.render(data1).getIPStatus(data1['iplist']);
@@ -793,6 +861,7 @@ var lvsFormView = Backbone.View.extend({
 		//basic_set['rs_cluster_name'] = this.$el.find('#rs_cluster_name').val();
 		basic_set['rs_port'] = this.$el.find('.rs_port').val();
 		basic_set['protocol'] = 'TCP';
+		basic_set['iplist'] = this.$el.find('[name="iplist"]').val();
 
 		var lb_set = {};
 		lb_set['lb_algo'] = this.$el.find('.lb_algo').val();
@@ -914,9 +983,36 @@ var lvsFormView = Backbone.View.extend({
 					{
 						self.$el.find('[name="vip"]').removeAttr('disabled');
 					}
+					self.$el.find('#iplist').html();
+					_.each(data.iplist, function(v, k){
+						self.$el.find('#iplist').append('<option name="'+v+'" value="'+v+'">'+v+'</option>');
+					});
+					$('#iplist').multiselect('destroy');
+					$('#iplist').multiselect({
+						onChange: function(element, checked){
+					       if(checked === true)
+					       {
+						      self.$el.find('[name="'+element.val()+'"]').attr('selected', 'selected');
+				           }
+				           else if(checked === false)
+				           {
+				           	  self.$el.find('[name="'+element.val()+'"]').removeAttr('selected');
+				           }
+					       //alert('Changed option ' + $(option).val() + '.');
+				        }
+					});
 				});
 			});
 			//用于select选择框
+			/*$('#iplist').multiselect({
+				onchange: function(element, checked){
+					if(checked)
+					{
+						console.log(element);
+					}
+					//alert('Changed option ' + $(option).val() + '.');
+				}
+			});*///渲染样式功能
 			$('#rs_cluster_name').select2({
 				placeholder: '请选择一个集群',
 				ajax: {

@@ -31,6 +31,7 @@
 </td>
 <td>
   <%_.each(rs_in_config, function(item){%>
+   <%if (item['in_use'] == 'true') {%> 
     <%if (item['status'] == 'up'){%>
       <p>
         <a class="ok rs_ip_port"><%=item["ip"]%>:<%=item["port"]%></a>
@@ -43,17 +44,19 @@
         </span>
       </p>
     <%}%>
-
+   <%}%>
   <%})%>
 
 </td>
 <td>
 	<%_.each(rs_in_config, function(item){%>
+    <%if (item['configed'] == 'true') {%>
 	    <p>
 	      <%=item["ip"]%>:<%=item["port"]%>
 	      <span class="glyphicon glyphicon-ok">	
 	      </span>
 	    <p>	
+    <%}%>
 	<%})%>
 </td>
 <td>

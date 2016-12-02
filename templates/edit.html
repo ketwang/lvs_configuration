@@ -99,15 +99,40 @@
 		<tr>
 		   <td><%=ip%></td>
 		   <%if (_.some(rs_in_config, function(rs){return rs['ip'] == ip})){%>
-		      <td>已配置</td>
 		      <%_.each(rs_in_config, function(rs){%>
 		         <%if (rs['ip'] == ip){%>
 		            <td><%=rs['status']%></td>
+		            <%if (rs['in_use'] == 'true'){%>
+		              <td>已配置</td>
+		            <%}else{%>
+		              <td>未配置</td>
+		            <%}%>
+		            <%if (rs['configed'] == 'true'){%>
+		                <td>已启用</td>
+		                <td>
+		                   <a class="label label-danger">
+		                     <span class="glyphicon glyphicon-minus minus" name="<%=ip%>"></span>
+		                   </a>
+		                </td>
+		            <%}else{%>
+		                <td>未启用</td>
+		                <td>
+		                  <a class="label label-danger">
+		                     <span class="glyphicon glyphicon-plus plus" name="<%=ip%>"></span>
+		                  </a>
+		                </td>
+		            <%}%>
 		         <%}%>
 		      <%})%>
 		   <%}else{%>
 		     <td>未配置</td>
 		     <td>状态未知</td>
+		     <td>未启用</td>
+		     <td>
+		       <a class="label label-danger">
+		         <span class="glyphicon glyphicon-plus plus" name="<%=ip%>"></span>
+		       </a>
+		     </td>
 		   <%}%>
 		</tr>
 	   <%})%>
@@ -122,15 +147,35 @@
 		  <tr>
 			<td><%=ip%></td>
 			<%if (_.some(rs_in_config, function(rs){return rs['ip'] == ip})){%>
-			   <td>已配置</td>
 			   <%_.each(rs_in_config, function(rs){%>
 			       <%if (rs['ip'] == ip){%>
 			          <td><%=rs['status']%></td>
+                      <%if (rs['in_use'] == 'true'){%>
+		                 <td>已配置</td>
+		              <%}else{%>
+		                 <td>未配置</td>
+		              <%}%>
+			          <%if (rs['configed'] == 'true'){%>
+			            <td>已启用</td>
+			            <td>
+		                  <a class="label label-danger">
+		                   <span class="glyphicon glyphicon-minus minus" name="<%=ip%>"></span>
+		                  </a>
+		                </td>
+			          <%}else{%>
+			            <td>未启用</td>
+			            <td>
+		                   <a class="label label-danger">
+		                      <span class="glyphicon glyphicon-plus plus" name="<%=ip%>"></span>
+		                   </a>
+		                </td>
+			          <%}%>
 			       <%}%>
 			   <%})%>
 			<%}else{%>
-			   <td>未配置</td>
 			   <td>状态未知</td>
+			   <td>未配置</td>
+			   <td>未启用</td>
 			<%}%>	
 		  </tr>
 		<%})%>

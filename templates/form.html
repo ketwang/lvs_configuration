@@ -49,6 +49,13 @@
               <input type="text" class="form-control rs_port" name="rs_port" data-validation="number" data-validation-allowing="range[80;10000]" data-validation-help="填写一个80到10000之间的端口号，一般我们都是选择8080，即使不是也不要乱使用1000以下的端口...">
           </div>
       </div>
+      <div class="form-group">
+        <label for='iplist' class="col-sm-2 control-label">机器列表</label>
+        <div class="col-sm-4">
+          <select id='iplist' name='iplist' multiple="multiple" class="form-control">
+          </select>
+        </div>
+      </div>
     </div>
     <div class="panel-footer basic_set_error_message" style="display: none"></div>
   </div>
